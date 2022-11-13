@@ -1,21 +1,21 @@
 import java.util.Scanner;
 
 public class Main {
-       public static void main(String[] args) {
-           Scanner scanner = new Scanner(System.in);
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        StepTracker stepTracker = new StepTracker();
 
+        while (true) {
 
-           while (true) {
-
-               printMenu();
-               int command = scanner.nextInt();
-               choiceAction(scanner, command);
-               if (command == 0) {
-                   System.out.println("Программа завершена");
-                   break;
-               }
-           }
-       }
+            printMenu();
+            int command = scanner.nextInt();
+            selectAction(scanner, command, stepTracker);
+            if (command == 0) {
+                System.out.println("Программа завершена");
+                break;
+            }
+        }
+    }
 
 
     public static void printMenu() {
@@ -27,51 +27,70 @@ public class Main {
         System.out.println("0 - Выход");
     }
 
-    public static void choiceAction(Scanner scanner, int command) {
-        StepTracker stepTracker = new StepTracker();
-        Converter converter = new Converter ();
-        int newStep;
+    public static void selectAction(Scanner scanner, int command, StepTracker stepTracker) {
+        Converter converter = new Converter();
         if (command == 1) {
 
             System.out.println("Сколько шагов прошли?");
+            int newStep;
             newStep = scanner.nextInt();
-            while (newStep<0 ){
+            while (newStep <= -1) {
                 System.out.println("Число не может быть отрицательным.Введите еще раз");
                 newStep = scanner.nextInt();
             }
-            System.out.println("В какой месяц ?");
+            System.out.println("Выберите месяц: " +
+                    "1-Январь,  " +
+                    "2-Февраль, " +
+                    "3-Март, " +
+                    "4-Апрель, " +
+                    "5-Май, " +
+                    "6-Июнь, " +
+                    "7-Июль, " +
+                    "8-Август, " +
+                    "9-Сентябрь, " +
+                    "10-Октябрь, " +
+                    "11-Ноябрь, " +
+                    "12-Декабрь");
             int stepMonth = scanner.nextInt();
-            while (stepMonth < 0 || stepMonth > 12){
-                System.out.println("Введите с 1-12 число");
+            while (stepMonth <= 0 || stepMonth >= 13) {
+                System.out.println("Введите число от 1 до 12");
                 stepMonth = scanner.nextInt();
             }
             System.out.println("В какой день ?");
             int stepDay = scanner.nextInt();
-            while (stepDay<0 || stepDay > 30){
-                System.out.println("Введите число с 1-30");
+            while (stepDay <= 0 || stepDay >= 31) {
+                System.out.println("Введите число от 1 до 30");
                 stepDay = scanner.nextInt();
             }
-            stepTracker.enterStepInDay (stepDay, stepMonth);
+            stepTracker.enterStepInDay(stepDay, stepMonth, newStep);
 
 
         } else if (command == 2) {
             System.out.println("Какой месяц?");
             int stepMonth = scanner.nextInt();
+            while (stepMonth <= 0 || stepMonth >= 13) {
+                System.out.println("Введите число от 1 до 12");
+                stepMonth = scanner.nextInt();
+            }
             stepTracker.printAllStepsMonth(stepMonth);
-            System.out.println("Общее количество шагов за месяц:"+ stepTracker.staticStep (stepMonth));
-            stepTracker.findMaxStaticStep(stepMonth);
-            stepTracker.averageStaticStep (stepTracker.staticStep (stepMonth));
-            converter.findDistance(stepTracker.staticStep (stepMonth));
-            converter.findKkal(stepTracker.staticStep (stepMonth));
-            stepTracker.bestSeries(stepMonth);
-
+            System.out.println("Общее количество шагов за месяц:" + stepTracker.findAllStepInMonth(stepMonth));
+            System.out.println("Максимальное пройденное количество шагов в месяце:" + stepTracker.findMaxStaticStep(stepMonth));
+            System.out.println("Среднее количество шагов:" + stepTracker.averageStaticStep(stepTracker.findAllStepInMonth(stepMonth)));
+            System.out.println("Пройденная дистанция (в км):" + converter.findDistance(stepTracker.findAllStepInMonth(stepMonth)));
+            System.out.println("Количество сожжённых килокалорий:" + converter.findKkal(stepTracker.findAllStepInMonth(stepMonth)));
+            System.out.println("Лучшая серия составила: " + stepTracker.findBestSeries(stepMonth));
 
 
         } else if (command == 3) {
-            System.out.println("Какой месяц?");
+            System.out.println("Какая новая цель на день?");
             int newStepGoal = scanner.nextInt();
-            System.out.println("Новая цель - " + stepTracker.changeStapInDays(newStepGoal)+ "шагов");
-        }  else {
+            while (newStepGoal <= -1) {
+                System.out.println("Введите неотрицательное число.");
+                newStepGoal = scanner.nextInt();
+            }
+            System.out.println("Новая цель - " + stepTracker.changeStepsInDays(newStepGoal) + " шагов");
+
+        } else {
             System.out.println("Такой команды нету,введите снова.");
         }
 

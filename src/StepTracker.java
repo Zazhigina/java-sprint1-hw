@@ -8,60 +8,80 @@ public class StepTracker {
             monthToData[i] = new MonthData();
         }
     }
-    static class MonthData {
-        int[] days = new int[30];
-    }
 
-    void enterStepInDay (int stepDay, int stepMonth) {
-        int newStep = monthToData[stepMonth].days[stepDay];
-        System.out.println("Ввели новые данные:" + stepDay + "числа " + stepMonth + "месяца  вы прошли " + newStep + "шагов");
-    }
-    void printAllStepsMonth(int stepMonth) {
-        System.out.println("Количество пройденных шагов по дням: ");
-       for (int i =0; i < monthToData[stepMonth].days.length; i++){
-            System.out.println("День " + (i+1) + ".  " + monthToData[stepMonth].days[i] + " шагов");
+    static class MonthData { // объект массива дат
+        int[] days = new int[30];
+
+        public void addStepDay(int stepDay, int steps) {
+            days[stepDay - 1] = steps;
+        }
+
+        public int getStepByDay(int stepDay) {
+            return days[stepDay];
+        }
+
+        public int[] getDays() {
+            return days;
         }
     }
-    int staticStep(int stepMonth) { // Общее количество шагов за месяц;
+
+    void enterStepInDay(int stepDay, int stepMonth, int steps) {
+        monthToData[stepMonth - 1].addStepDay(stepDay, steps);
+        System.out.println("Ввели новые данные:" + stepDay + "число, " + stepMonth + "месяц,  вы прошли " + steps + "шагов");
+    }
+
+    void printAllStepsMonth(int stepMonth) {
+        System.out.println("Количество пройденных шагов по дням: ");
+        for (int i = 0; i < monthToData[stepMonth - 1].getDays().length; i++) {
+            System.out.println("День " + (i + 1) + ".  " + monthToData[stepMonth - 1].getStepByDay(i) + " шагов");
+        }
+    }
+
+    int findAllStepInMonth(int stepMonth) { // Общее количество шагов за месяц;
         int sumStep = 0;
 
-        for (int i = 0 ; i < monthToData[stepMonth].days.length; i++) {
-            sumStep = sumStep + monthToData[stepMonth].days[i];
+        for (int i = 0; i < monthToData[stepMonth - 1].getDays().length; i++) {
+            sumStep = sumStep + monthToData[stepMonth - 1].getStepByDay(i);
         }
         return sumStep;
     }
-    void findMaxStaticStep(int stepMonth) { //Максимальное пройденное количество шагов в месяце;
+
+    int findMaxStaticStep(int stepMonth) { //Максимальное пройденное количество шагов в месяце;
         int maxStaticStep = 0;
-        for (int i = 0; i < monthToData[stepMonth].days.length; i++) {
-            if (monthToData[stepMonth].days[i] > maxStaticStep) {
-                maxStaticStep  = monthToData[stepMonth].days[i];
+        for (int i = 0; i < monthToData[stepMonth - 1].getDays().length; i++) {
+            if (monthToData[stepMonth - 1].getStepByDay(i) > maxStaticStep) {
+                maxStaticStep = monthToData[stepMonth - 1].getStepByDay(i);
             }
         }
-        System.out.println("Максимальное пройденное количество шагов в месяце:"+ maxStaticStep );
+        return maxStaticStep;
     }
 
 
-    void averageStaticStep(int sumStep) {  //Среднее количество шагов;
-        int averageStep = sumStep / 30;
-        System.out.println("Среднее количество шагов:"+ averageStep );
+    int averageStaticStep(int sumStep) {  //Среднее количество шагов;
+        sumStep /= 30;
+        return sumStep;
     }
 
-    void bestSeries (int stepMonth) {  //Лучшая серия: максимальное количество подряд идущих дней,
-                                           // в течение которых количество шагов за день было равно или выше целевого.
+    int findBestSeries(int stepMonth) {  //Лучшая серия: максимальное количество подряд идущих дней,
+        // в течение которых количество шагов за день было равно или выше целевого.
         int series = 0;
         int best = 0;
-        for ( int i = 0; i<monthToData[stepMonth].days.length; i++){
-            if (monthToData[stepMonth].days[i] >= stepGoal ) {
-                series++;
-                if (series>best){
-                    best++;
+        for (int i = 0; i < monthToData[stepMonth - 1].getDays().length; i++) {
+            if (monthToData[stepMonth - 1].getStepByDay(i) >= stepGoal) {
+                series = series + 1;
+                if (series > best) {
+                    best = best + 1;
                 }
-            }else {
-                series=0;
+
+            } else {
+                return best ;
             }
-        }System.out.println("Лучшая серия составила: " + best);
+
+        }
+        return best;
     }
-    int changeStapInDays (int newStepGoal) { //изменение цели на месяц
+
+    int changeStepsInDays(int newStepGoal) { //изменение цели на месяц
         stepGoal = newStepGoal;
         return stepGoal;
     }
