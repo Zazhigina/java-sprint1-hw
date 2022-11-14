@@ -68,15 +68,13 @@ public class StepTracker {
         int best = 0;
         for (int i = 0; i < monthToData[stepMonth - 1].getDays().length; i++) {
             if (monthToData[stepMonth - 1].getStepByDay(i) >= stepGoal) {
-                series = series + 1;
-                if (series > best) {
-                    best = best + 1;
-                }
-
+                series++;
             } else {
-                return best ;
+                series = 0;
             }
-
+            if (series > best) {
+                best++;
+            }
         }
         return best;
     }
